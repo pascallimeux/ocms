@@ -1,15 +1,13 @@
 { 
     "logger":"Info",
-    "logFileName":"/var/log/mhealth-ocms/ocms.log",
+    "logFileName":"/var/log/ocms/ocms.log",
 	"httpHostHyperledger":"http://192.168.20.28:7000",
 	"chainCodePath":"github.com/pascallimeux/blockchain/consent",
 	"chainCodeName":"",
 	"enrollID":"orange_user",
 	"enrollSecret":"GtflmdhF6K32",
-
-    "httpHostUrl":"10.194.7.224:8088",
+    "httpHostUrl":"192.168.20.94:8030",
     "readTimeout":5,
     "writeTimeout":10,
-    "handlerTimeout":12,
-
+    "handlerTimeout":12
 }

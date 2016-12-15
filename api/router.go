@@ -16,7 +16,7 @@ package api
 import (
 	"github.com/gorilla/mux"
 	"github.com/pascallimeux/ocms/common"
-	"github.com/pascallimeux/ocms/hyperledger"
+	"github.com/pascallimeux/ocms/hyperledger/consent"
 	"github.com/pascallimeux/ocms/utils/log"
 	"net/http"
 )
@@ -26,9 +26,9 @@ const (
 )
 
 type AppContext struct {
-	HttpServer    *http.Server
-	HP_helper     hyperledger.HP_Helper
-	Configuration common.Configuration
+	HttpServer     *http.Server
+	Consent_helper consent.Consent_Helper
+	Configuration  common.Configuration
 }
 
 // Initialize API

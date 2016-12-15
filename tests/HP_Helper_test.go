@@ -21,7 +21,7 @@ func TestDeploySmartContractNominal(t *testing.T) {
 
 	function := "init"
 	args := make([]string, 0)
-	_, err := AppContext.HP_helper.DeployChainCode(AppContext.Configuration.ChainCodePath, function, args)
+	_, err := AppContext.Consent_helper.HP_helper.DeployChainCode(AppContext.Configuration.ChainCodePath, function, args)
 	if err != nil {
 		t.Error(err)
 	}

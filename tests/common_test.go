@@ -17,6 +17,7 @@ import (
 	"github.com/pascallimeux/ocms/api"
 	"github.com/pascallimeux/ocms/common"
 	"github.com/pascallimeux/ocms/hyperledger"
+	"github.com/pascallimeux/ocms/hyperledger/consent"
 	"github.com/pascallimeux/ocms/utils"
 	"github.com/pascallimeux/ocms/utils/log"
 
@@ -54,11 +55,12 @@ func setup(isDropDB bool) {
 	// Init logger
 	logfile = log.Init_log(configuration.LogFileName, configuration.Logger)
 
-	// Init Hyperledger helper
+	// Init Hyperledger helpers
 	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, ChainCodePath: configuration.ChainCodePath, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
+	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper}
 
 	// Init application context
-	AppContext = api.AppContext{HP_helper: HP_helper, Configuration: configuration}
+	AppContext = api.AppContext{Consent_helper: Consent_Helper, Configuration: configuration}
 
 	// Init http server
 	router := AppContext.CreateRoutes()

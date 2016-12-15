@@ -4,6 +4,7 @@ import (
 	"github.com/pascallimeux/ocms/api"
 	"github.com/pascallimeux/ocms/common"
 	"github.com/pascallimeux/ocms/hyperledger"
+	"github.com/pascallimeux/ocms/hyperledger/content"
 	"github.com/pascallimeux/ocms/utils"
 	"github.com/pascallimeux/ocms/utils/log"
 	"net/http"
@@ -42,11 +43,12 @@ func main() {
 	// Write configuration in log
 	log.Info(log.Here(), utils.Get_fields(configuration))
 
-	// Init Hyperledger helper
+	// Init Hyperledger helpers
 	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, ChainCodePath: configuration.ChainCodePath, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
+	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper}
 
 	// Init application context
-	appContext := api.AppContext{HP_helper: HP_helper, Configuration: configuration}
+	appContext := api.AppContext{Consent_helper: Consent_Helper, Configuration: configuration}
 
 	// Start http server
 	router := appContext.CreateRoutes()

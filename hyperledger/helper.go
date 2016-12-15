@@ -21,72 +21,16 @@ import (
 	"github.com/pascallimeux/ocms/utils/log"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
-type Result struct {
-	status  string
-	message string
-}
-
-type Response struct {
-	Jsonrpc string
-	Result  Result
-	Id      int
-}
+var client http.Client = http.Client{Timeout: time.Duration(5 * time.Second)}
 
 type HP_Helper struct {
 	HttpHyperledger string
 	ChainCodePath   string
 	EnrollID        string
 	EnrollSecret    string
-}
-
-type Invoke struct {
-	Jsonrpc string
-	Method  string
-	Params  Params2
-	Id      int
-}
-
-type Query struct {
-	Jsonrpc string
-	Method  string
-	Params  Params2
-	Id      int
-}
-
-type Deploy struct {
-	Jsonrpc string
-	Method  string
-	Params  Params
-	Id      int
-}
-
-type ChaincodeID struct {
-	Path string
-}
-
-type ChaincodeID2 struct {
-	Name string
-}
-
-type CtorMsg struct {
-	Function string
-	Args     []string
-}
-
-type Params struct {
-	Type          int
-	ChaincodeID   ChaincodeID
-	SecureContext string
-	CtorMsg       CtorMsg
-}
-
-type Params2 struct {
-	Type          int
-	ChaincodeID   ChaincodeID2
-	SecureContext string
-	CtorMsg       CtorMsg
 }
 
 const (
@@ -96,33 +40,6 @@ const (
 	CHAINCODE   = "/chaincode"
 	CONTENTTYPE = "application/json"
 )
-
-func Build_query_body(chaincode_name, hp_account, function string, args []string) ([]byte, error) {
-	query := &Query{Jsonrpc: JSONRPC, Method: "query", Id: 1, Params: Params2{Type: 1, ChaincodeID: ChaincodeID2{Name: chaincode_name}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
-	bytes, err := json.Marshal(query)
-	if err != nil {
-		return bytes, err
-	}
-	return bytes, nil
-}
-
-func Build_invoke_body(chaincode_name, hp_account, function string, args []string) ([]byte, error) {
-	invoke := &Invoke{Jsonrpc: JSONRPC, Method: "invoke", Id: 1, Params: Params2{Type: 1, ChaincodeID: ChaincodeID2{Name: chaincode_name}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
-	bytes, err := json.Marshal(invoke)
-	if err != nil {
-		return bytes, err
-	}
-	return bytes, nil
-}
-
-func Build_deploy_body(smartcontract_path, hp_account, function string, args []string) ([]byte, error) {
-	deploy := &Deploy{Jsonrpc: JSONRPC, Method: "deploy", Id: 1, Params: Params{Type: 1, ChaincodeID: ChaincodeID{Path: smartcontract_path}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
-	bytes, err := json.Marshal(deploy)
-	if err != nil {
-		return bytes, err
-	}
-	return bytes, nil
-}
 
 func Display_json(jsonbytes []byte) {
 	var out bytes.Buffer
@@ -140,7 +57,7 @@ func (h *HP_Helper) DeployChainCode(smartcontract_path, function string, args []
 		return response, err1
 	}
 	log.Trace(log.Here(), "BODY: ", string(contentBytes))
-	resp, err2 := http.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
 	if err2 != nil {
 		return response, err2
 	}
@@ -160,12 +77,16 @@ func (h *HP_Helper) DeployChainCode(smartcontract_path, function string, args []
 	return response, nil
 }
 
-func (h *HP_Helper) invoke() {
-	log.Trace(log.Here(), "invoke() : calling method -")
+func (h *HP_Helper) Invoke() {
+	log.Trace(log.Here(), "Invoke() : calling method -")
 }
 
-func (h *HP_Helper) query() {
-	log.Trace(log.Here(), "query() : calling method -")
+func (h *HP_Helper) Query() {
+	log.Trace(log.Here(), "Query() : calling method -")
+}
+
+func (h *HP_Helper) Registar() {
+	log.Trace(log.Here(), "Registar() : calling method -")
 }
 
 func main() {

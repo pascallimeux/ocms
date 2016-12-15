@@ -15,9 +15,11 @@ package tests
 
 import (
 	"github.com/pascallimeux/ocms/api"
+	"github.com/pascallimeux/ocms/common"
+	"github.com/pascallimeux/ocms/hyperledger"
 	"github.com/pascallimeux/ocms/utils"
 	"github.com/pascallimeux/ocms/utils/log"
-	"gopkg.in/mgo.v2"
+
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -30,32 +32,33 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-var applicationJSON string = "application/json"
 var AppContext api.AppContext
 var httpServerTest *httptest.Server
 var logfile *os.File
-var MOCK_HR string
-
-func DropDB(session *mgo.Session, dbname string) {
-	err := session.DB(dbname).DropDatabase()
-	if err != nil {
-		log.Fatal(log.Here(), "error:", err.Error())
-	}
-}
 
 func setup(isDropDB bool) {
 
+	const (
+		LOGFILENAME = "/var/log/ocms/ocmstest.log"
+		LOGMODE     = "Trace"
+	)
+
 	// Read configuration file
-	configuration, err := utils.Readconf("../config/configtest.json")
+	config_file := "../config/configtest.json"
+	var configuration common.Configuration
+	err := utils.Read_Conf(config_file, &configuration)
 	if err != nil {
-		log.Fatal(log.Here(), "error:", err.Error())
+		panic(err.Error())
 	}
 
 	// Init logger
 	logfile = log.Init_log(configuration.LogFileName, configuration.Logger)
 
+	// Init Hyperledger helper
+	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, ChainCodePath: configuration.ChainCodePath, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
+
 	// Init application context
-	AppContext = api.AppContext{}
+	AppContext = api.AppContext{HP_helper: HP_helper, Configuration: configuration}
 
 	// Init http server
 	router := AppContext.CreateRoutes()
@@ -65,4 +68,6 @@ func setup(isDropDB bool) {
 
 func shutdown() {
 	log.Trace(log.Here(), "End of tests..")
+	defer logfile.Close()
+	defer httpServerTest.Close()
 }

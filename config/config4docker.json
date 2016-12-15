@@ -1,8 +1,8 @@
 { 
     "logger":"Info",
     "logFileName":"/var/log/ocms/ocms.log",
-	"httpHostHyperledger":"http://192.168.20.28:7000",
-	"chainCodePath":"github.com/pascallimeux/blockchain/consent",
+    "httpHyperledger":"http://10.194.18.49:7050",
+    "chainCodePath":"github.com/orangelabs/consent",
 	"chainCodeName":"",
 	"enrollID":"orange_user",
 	"enrollSecret":"GtflmdhF6K32",

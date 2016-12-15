@@ -17,41 +17,34 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
+	"reflect"
 )
 
-type Configuration struct {
-	Logger              string
-	httpHostHyperledger string
-	httpHostUrl         string
-	chainCodePath       string
-	HttpHostUrl         string
-	enrollID            string
-	enrollSecret        string
-	LogFileName         string
-	ReadTimeout         time.Duration
-	WriteTimeout        time.Duration
-	HandlerTimeout      time.Duration
-}
-
-// Read configuration file and create Configuration
-func Readconf(configFileName string) (Configuration, error) {
-	configuration := Configuration{}
+// Read configuration file and create datstruct
+func Read_Conf(configFileName string, DataStruct interface{}) error {
 	if _, err := os.Stat(configFileName); err != nil {
 		if os.IsNotExist(err) {
-			return configuration, fmt.Errorf("Readconf(): config file does not exist!")
+			return fmt.Errorf("Readconf(): config file does not exist!")
 		}
 	}
 	file, _ := os.Open(configFileName)
 	decoder := json.NewDecoder(file)
-	err := decoder.Decode(&configuration)
+	err := decoder.Decode(&DataStruct)
 	if err != nil {
-		return configuration, fmt.Errorf("Readconf(): config file error!", err)
+		return fmt.Errorf("Readconf(): config file error!", err)
 	}
-	return configuration, nil
+	return nil
 }
 
-func (c Configuration) To_string() string {
-	mes := ("Start application: http server=" + c.HttpHostUrl + "  Hyperledger server=" + c.httpHostHyperledger + "  logger mode=" + c.Logger)
-	return mes
+func Get_fields(c interface{}) string {
+	ret := "Configuration: ["
+	val := reflect.Indirect(reflect.ValueOf(c))
+
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
+		ret = ret + " " + typeField.Name + ":" + fmt.Sprintf("%v", valueField.Interface())
+	}
+	ret = ret + "]"
+	return ret
 }

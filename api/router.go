@@ -15,18 +15,26 @@ package api
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/pascallimeux/ocms/common"
+	"github.com/pascallimeux/ocms/hyperledger"
 	"github.com/pascallimeux/ocms/utils/log"
 	"net/http"
 )
 
+const (
+	VERSIONURI = "/ocms/v1/version"
+)
+
 type AppContext struct {
-	HttpServer *http.Server
+	HttpServer    *http.Server
+	HP_helper     hyperledger.HP_Helper
+	Configuration common.Configuration
 }
 
 // Initialize API
 func (appContext *AppContext) CreateRoutes() *mux.Router {
 	log.Trace(log.Here(), "createRoutes() : calling method -")
 	router := mux.NewRouter().StrictSlash(false)
-	router.HandleFunc("/ocms/v1/version", appContext.getVersion).Methods("GET")
+	router.HandleFunc(VERSIONURI, appContext.getVersion).Methods("GET")
 	return router
 }

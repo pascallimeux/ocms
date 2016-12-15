@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Build urmmongo"
+echo "Build OCMS"
 go build -ldflags "-s" $GOPATH/src/github.com/pascallimeux/ocms/main.go
 if [ ! -d "$GOPATH/src/github.com/pascallimeux/ocms/dist" ]; then
   mkdir $GOPATH/src/github.com/pascallimeux/ocms/dist

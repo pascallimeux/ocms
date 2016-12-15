@@ -17,12 +17,21 @@ import (
 	"encoding/json"
 	"github.com/pascallimeux/ocms/utils/log"
 	"net/http"
+	"os"
 )
+
+type Version struct {
+	Version string
+}
 
 //HTTP Get - /ocms/v1/version
 func (a *AppContext) getVersion(w http.ResponseWriter, r *http.Request) {
 	log.Trace(log.Here(), "getVersion() : calling method -")
-	version := `{version:1.0}`
+	//version := `{version:1.0}`
+	version := Version{}
+	file, _ := os.Open("../VERSION")
+	decoder := json.NewDecoder(file)
+	decoder.Decode(&version)
 	content, _ := json.Marshal(version)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

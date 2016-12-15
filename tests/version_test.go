@@ -31,7 +31,7 @@ func TestDatasourceCreateAndGetNominal(t *testing.T) {
 	if res.StatusCode != http.StatusOK {
 		t.Fatal("Non-expected status code: %v\n\tbody: %v, data:%s\n", http.StatusCreated, res.StatusCode, body)
 	}
-	if !strings.Contains(body, "{\"version\"") {
+	if !strings.Contains(body, "{\"Version\"") {
 		t.Fatalf("Non-expected body content: %v", body)
 	}
 }

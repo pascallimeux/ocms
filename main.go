@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/pascallimeux/ocms/api"
+	"github.com/pascallimeux/ocms/common"
+	"github.com/pascallimeux/ocms/hyperledger"
 	"github.com/pascallimeux/ocms/utils"
 	"github.com/pascallimeux/ocms/utils/log"
 	"net/http"
@@ -19,7 +21,8 @@ func main() {
 	}
 
 	// Init configuration
-	configuration, err := utils.Readconf(config_file)
+	var configuration common.Configuration
+	err := utils.Read_Conf(config_file, &configuration)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -27,10 +30,23 @@ func main() {
 	// Init logger
 	f := log.Init_log(configuration.LogFileName, configuration.Logger)
 	defer f.Close()
-	log.Info(log.Here(), configuration.To_string())
+
+	// Get local IP address if possible
+	ipAddress, err := utils.GetOutboundIP()
+	if err != nil {
+		log.Error(log.Here(), " Impossible to retrieve the IP address of this machine")
+	} else {
+		configuration.HttpHostUrl = ipAddress + ":8030"
+	}
+
+	// Write configuration in log
+	log.Info(log.Here(), utils.Get_fields(configuration))
+
+	// Init Hyperledger helper
+	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, ChainCodePath: configuration.ChainCodePath, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
 
 	// Init application context
-	appContext := api.AppContext{}
+	appContext := api.AppContext{HP_helper: HP_helper, Configuration: configuration}
 
 	// Start http server
 	router := appContext.CreateRoutes()

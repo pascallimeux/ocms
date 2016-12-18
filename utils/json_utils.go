@@ -16,7 +16,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/pascallimeux/urmmongo/utils/log"
+	"github.com/pascallimeux/ocms/utils/log"
 )
 
 func Display_json(jsonstr string) {

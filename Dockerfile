@@ -5,9 +5,9 @@ RUN mkdir -p /go/src/github.com/pascallimeux
 COPY . /go/src/github.com/pascallimeux/ocms
 
 # configure proxy 
-ENV http_proxy=http://10.193.21.110:8080
-ENV https_proxy=http://10.193.21.110:8080
-ENV use_proxy=on
+#ENV http_proxy=http://10.193.21.110:8080
+#ENV https_proxy=http://10.193.21.110:8080
+#ENV use_proxy=on
 
 # Install our dependencies
 RUN go get gopkg.in/mgo.v2

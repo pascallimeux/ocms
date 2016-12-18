@@ -14,14 +14,15 @@ limitations under the License.
 package tests
 
 import (
+	"github.com/pascallimeux/ocms/api"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
 )
 
-func TestDatasourceCreateAndGetNominal(t *testing.T) {
-	res, err := http.Get(httpServerTest.URL + "/ocms/v1/version")
+func TestGetAPIVersionNominal(t *testing.T) {
+	res, err := http.Get(httpServerTest.URL + api.VERSIONURI)
 	data, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
@@ -31,6 +32,7 @@ func TestDatasourceCreateAndGetNominal(t *testing.T) {
 	if res.StatusCode != http.StatusOK {
 		t.Fatal("Non-expected status code: %v\n\tbody: %v, data:%s\n", http.StatusCreated, res.StatusCode, body)
 	}
+	t.Log(body)
 	if !strings.Contains(body, "{\"Version\"") {
 		t.Fatalf("Non-expected body content: %v", body)
 	}

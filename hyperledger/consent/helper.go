@@ -90,7 +90,7 @@ func (c *Consent_Helper) IsRegistar(enrollID string) (bool, error) {
 
 func (c *Consent_Helper) GetTRConsent(consentID string) (hyperledger.Transaction, error) {
 	log.Trace(log.Here(), "GetTRConsent() : calling method -")
-	response, err := c.HP_helper.Transaction(consentID)
+	response, err := c.HP_helper.GetTransaction(consentID)
 	return response, err
 }
 

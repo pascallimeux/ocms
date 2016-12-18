@@ -24,6 +24,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestMain(m *testing.M) {
@@ -36,6 +37,8 @@ func TestMain(m *testing.M) {
 var AppContext api.AppContext
 var httpServerTest *httptest.Server
 var logfile *os.File
+var DeployTimeout time.Duration
+var TransactionTimeout time.Duration
 
 func setup(isDropDB bool) {
 
@@ -51,12 +54,17 @@ func setup(isDropDB bool) {
 	if err != nil {
 		panic(err.Error())
 	}
+	DeployTimeout = configuration.DeployTimeout
+	TransactionTimeout = configuration.TransactionTimeout
 
 	// Init logger
 	logfile = log.Init_log(configuration.LogFileName, configuration.Logger)
 
+	// Write configuration in log
+	log.Info(log.Here(), utils.Get_fields(configuration))
+
 	// Init Hyperledger helpers
-	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger}
+	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, HLTimeout: configuration.HLTimeout}
 	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper, ChainCodePath: configuration.ChainCodePath, ChainCodeName: configuration.ChainCodeName, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
 
 	// Init application context

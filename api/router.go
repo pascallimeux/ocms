@@ -22,7 +22,9 @@ import (
 )
 
 const (
-	VERSIONURI = "/ocms/v1/version"
+	VERSIONURI   = "/ocms/v1/version"
+	CONSENTAPI   = "/ocms/v1/api/consent"
+	CONSENTTRAPI = "/ocms/v1/api/consent/hyperledger/consenttr"
 )
 
 type AppContext struct {
@@ -36,5 +38,7 @@ func (appContext *AppContext) CreateRoutes() *mux.Router {
 	log.Trace(log.Here(), "createRoutes() : calling method -")
 	router := mux.NewRouter().StrictSlash(false)
 	router.HandleFunc(VERSIONURI, appContext.getVersion).Methods("GET")
+	router.HandleFunc(CONSENTAPI, appContext.processConsent).Methods("POST")
+	router.HandleFunc(CONSENTTRAPI, appContext.processConsentTR).Methods("GET")
 	return router
 }

@@ -16,7 +16,6 @@ package hyperledger
 import (
 	"bytes"
 	"encoding/json"
-	//"fmt"
 	"github.com/pascallimeux/ocms/utils"
 	"github.com/pascallimeux/ocms/utils/log"
 	"io/ioutil"
@@ -24,10 +23,14 @@ import (
 	"time"
 )
 
-var client http.Client = http.Client{Timeout: time.Duration(10 * time.Second)}
-
 type HP_Helper struct {
 	HttpHyperledger string
+	HLTimeout       time.Duration
+	client          http.Client
+}
+
+func (h *HP_Helper) InitClient() {
+	h.client = http.Client{Timeout: time.Duration(h.HLTimeout * time.Second)}
 }
 
 const (
@@ -38,15 +41,9 @@ const (
 	CONTENTTYPE = "application/json"
 )
 
-/*
-func Display_json(jsonbytes []byte) {
-	var out bytes.Buffer
-	json.Indent(&out, jsonbytes, "", "  ")
-	fmt.Println("Json object: ", out.String())
-}*/
-
 func (h *HP_Helper) Registar(enrollId, enrollSecret string) (SimpleResponse, error) {
 	log.Trace(log.Here(), "Registar() : calling method -")
+	timer := utils.Timer{}
 	response := SimpleResponse{}
 	url := h.HttpHyperledger + REGISTAR
 	log.Trace(log.Here(), "URL: ", url)
@@ -55,31 +52,35 @@ func (h *HP_Helper) Registar(enrollId, enrollSecret string) (SimpleResponse, err
 		return response, err1
 	}
 	log.Trace(log.Here(), "BODY: ", string(contentBytes))
-	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	resp, err2 := h.client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
 	if err2 != nil {
 		return response, err2
 	}
 	defer resp.Body.Close()
 	err3 := BuildResponse(&response, resp)
+	timer.LogElapsed(log.Here(), "Registar()")
 	return response, err3
 }
 
 func (h *HP_Helper) IsRegistar(enrollId string) (SimpleResponse, error) {
-	log.Trace(log.Here(), "Registar() : calling method -")
+	log.Trace(log.Here(), "IsRegistar() : calling method -")
+	timer := utils.Timer{}
 	response := SimpleResponse{}
 	url := h.HttpHyperledger + REGISTAR + "/" + enrollId
 	log.Trace(log.Here(), "URL: ", url)
-	resp, err2 := client.Get(url)
+	resp, err2 := h.client.Get(url)
 	if err2 != nil {
 		return response, err2
 	}
 	defer resp.Body.Close()
 	err3 := BuildResponse(&response, resp)
+	timer.LogElapsed(log.Here(), "IsRegistar()")
 	return response, err3
 }
 
 func (h *HP_Helper) DeployChainCode(smartcontract_path, hp_account, function string, args []string) (Response, error) {
-	log.Trace(log.Here(), "deployChainCode() : calling method -")
+	log.Trace(log.Here(), "DeployChainCode() : calling method -")
+	timer := utils.Timer{}
 	response := Response{}
 	url := h.HttpHyperledger + CHAINCODE
 	log.Trace(log.Here(), "URL: ", url)
@@ -88,17 +89,19 @@ func (h *HP_Helper) DeployChainCode(smartcontract_path, hp_account, function str
 		return response, err1
 	}
 	log.Trace(log.Here(), "BODY: ", string(contentBytes))
-	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	resp, err2 := h.client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
 	if err2 != nil {
 		return response, err2
 	}
 	defer resp.Body.Close()
 	err3 := BuildResponse(&response, resp)
+	timer.LogElapsed(log.Here(), "DeployChainCode()")
 	return response, err3
 }
 
 func (h *HP_Helper) Invoke(chaincode_name, hp_account, function string, args []string) (Response, error) {
 	log.Trace(log.Here(), "Invoke() : calling method -")
+	timer := utils.Timer{}
 	response := Response{}
 	url := h.HttpHyperledger + CHAINCODE
 	log.Trace(log.Here(), "URL: ", url)
@@ -107,17 +110,19 @@ func (h *HP_Helper) Invoke(chaincode_name, hp_account, function string, args []s
 		return response, err1
 	}
 	log.Trace(log.Here(), "BODY: ", string(contentBytes))
-	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	resp, err2 := h.client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
 	if err2 != nil {
 		return response, err2
 	}
 	defer resp.Body.Close()
 	err3 := BuildResponse(&response, resp)
+	timer.LogElapsed(log.Here(), "Invoke()")
 	return response, err3
 }
 
 func (h *HP_Helper) Query(chaincode_name, hp_account, function string, args []string) (Response, error) {
 	log.Trace(log.Here(), "Query() : calling method -")
+	timer := utils.Timer{}
 	response := Response{}
 	url := h.HttpHyperledger + CHAINCODE
 	log.Trace(log.Here(), "URL: ", url)
@@ -126,26 +131,29 @@ func (h *HP_Helper) Query(chaincode_name, hp_account, function string, args []st
 		return response, err1
 	}
 	log.Trace(log.Here(), "BODY: ", string(contentBytes))
-	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	resp, err2 := h.client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
 	if err2 != nil {
 		return response, err2
 	}
 	defer resp.Body.Close()
 	err3 := BuildResponse(&response, resp)
+	timer.LogElapsed(log.Here(), "Query()")
 	return response, err3
 }
 
-func (h *HP_Helper) Transaction(transaction_uuid string) (Transaction, error) {
-	log.Trace(log.Here(), "Transation() : calling method -")
+func (h *HP_Helper) GetTransaction(transaction_uuid string) (Transaction, error) {
+	log.Trace(log.Here(), "GetTransaction() : calling method -")
+	timer := utils.Timer{}
 	response := Transaction{}
 	url := h.HttpHyperledger + TRANSACTION + "/" + transaction_uuid
 	log.Trace(log.Here(), "URL: ", url)
-	resp, err2 := client.Get(url)
+	resp, err2 := h.client.Get(url)
 	if err2 != nil {
 		return response, err2
 	}
 	defer resp.Body.Close()
 	err3 := BuildResponse(&response, resp)
+	timer.LogElapsed(log.Here(), "GetTransaction()")
 	return response, err3
 }
 

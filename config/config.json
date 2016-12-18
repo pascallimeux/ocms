@@ -7,8 +7,11 @@
 	"enrollID":"orange_user",
 	"enrollSecret":"GtflmdhF6K32",
     "httpHostUrl":"192.168.20.94:8030",
-    "readTimeout":5,
-    "writeTimeout":10,
-    "handlerTimeout":12,
-    "applicationID": "280399A20162908Z"
+    "readTimeout":5000000000,
+    "writeTimeout":10000000000,
+    "handlerTimeout":12000000000,
+    "applicationID": "280399A20162908Z",
+    "HLTimeout":10000000000,
+    "DeployTimeout":7000000000,
+    "TransactionTimeout":5000000000
 }

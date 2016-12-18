@@ -43,7 +43,7 @@ func Get_fields(c interface{}) string {
 	for i := 0; i < val.NumField(); i++ {
 		valueField := val.Field(i)
 		typeField := val.Type().Field(i)
-		ret = ret + " " + typeField.Name + ":" + fmt.Sprintf("%v", valueField.Interface())
+		ret = ret + "\n\t\t\t\t\t" + typeField.Name + ":" + fmt.Sprintf("%v", valueField.Interface())
 	}
 	ret = ret + "]"
 	return ret

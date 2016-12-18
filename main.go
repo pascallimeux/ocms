@@ -44,8 +44,8 @@ func main() {
 	log.Info(log.Here(), utils.Get_fields(configuration))
 
 	// Init Hyperledger helpers
-	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, ChainCodePath: configuration.ChainCodePath, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
-	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper}
+	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger}
+	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper, ChainCodePath: configuration.ChainCodePath, ChainCodeName: configuration.ChainCodeName, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
 
 	// Init application context
 	appContext := api.AppContext{Consent_helper: Consent_Helper, Configuration: configuration}

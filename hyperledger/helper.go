@@ -16,7 +16,7 @@ package hyperledger
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"github.com/pascallimeux/ocms/utils"
 	"github.com/pascallimeux/ocms/utils/log"
 	"io/ioutil"
@@ -24,35 +24,33 @@ import (
 	"time"
 )
 
-var client http.Client = http.Client{Timeout: time.Duration(5 * time.Second)}
+var client http.Client = http.Client{Timeout: time.Duration(10 * time.Second)}
 
 type HP_Helper struct {
 	HttpHyperledger string
-	ChainCodePath   string
-	EnrollID        string
-	EnrollSecret    string
 }
 
 const (
 	JSONRPC     = "2.0"
-	SC_PATH     = "github.com/pascallimeux/blockchain/consent"
-	HP_ACCOUNT  = "pascal"
 	CHAINCODE   = "/chaincode"
+	REGISTAR    = "/registrar"
+	TRANSACTION = "/transactions"
 	CONTENTTYPE = "application/json"
 )
 
+/*
 func Display_json(jsonbytes []byte) {
 	var out bytes.Buffer
 	json.Indent(&out, jsonbytes, "", "  ")
 	fmt.Println("Json object: ", out.String())
-}
+}*/
 
-func (h *HP_Helper) DeployChainCode(smartcontract_path, function string, args []string) (Response, error) {
-	log.Trace(log.Here(), "deployChainCode() : calling method -")
-	response := Response{}
-	url := h.HttpHyperledger + CHAINCODE
+func (h *HP_Helper) Registar(enrollId, enrollSecret string) (SimpleResponse, error) {
+	log.Trace(log.Here(), "Registar() : calling method -")
+	response := SimpleResponse{}
+	url := h.HttpHyperledger + REGISTAR
 	log.Trace(log.Here(), "URL: ", url)
-	contentBytes, err1 := Build_deploy_body(SC_PATH, HP_ACCOUNT, function, args)
+	contentBytes, err1 := Build_registar_body(enrollId, enrollSecret)
 	if err1 != nil {
 		return response, err1
 	}
@@ -62,42 +60,109 @@ func (h *HP_Helper) DeployChainCode(smartcontract_path, function string, args []
 		return response, err2
 	}
 	defer resp.Body.Close()
-	bytes, err3 := ioutil.ReadAll(resp.Body)
-	if err3 != nil {
-		return response, err3
+	err3 := BuildResponse(&response, resp)
+	return response, err3
+}
+
+func (h *HP_Helper) IsRegistar(enrollId string) (SimpleResponse, error) {
+	log.Trace(log.Here(), "Registar() : calling method -")
+	response := SimpleResponse{}
+	url := h.HttpHyperledger + REGISTAR + "/" + enrollId
+	log.Trace(log.Here(), "URL: ", url)
+	resp, err2 := client.Get(url)
+	if err2 != nil {
+		return response, err2
 	}
-	err4 := json.Unmarshal(bytes, &response)
-	if err4 != nil {
-		return response, err4
+	defer resp.Body.Close()
+	err3 := BuildResponse(&response, resp)
+	return response, err3
+}
+
+func (h *HP_Helper) DeployChainCode(smartcontract_path, hp_account, function string, args []string) (Response, error) {
+	log.Trace(log.Here(), "deployChainCode() : calling method -")
+	response := Response{}
+	url := h.HttpHyperledger + CHAINCODE
+	log.Trace(log.Here(), "URL: ", url)
+	contentBytes, err1 := Build_deploy_body(smartcontract_path, hp_account, function, args)
+	if err1 != nil {
+		return response, err1
 	}
-	responseToString, err5 := utils.StructToString(response)
-	if err5 == nil {
+	log.Trace(log.Here(), "BODY: ", string(contentBytes))
+	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	if err2 != nil {
+		return response, err2
+	}
+	defer resp.Body.Close()
+	err3 := BuildResponse(&response, resp)
+	return response, err3
+}
+
+func (h *HP_Helper) Invoke(chaincode_name, hp_account, function string, args []string) (Response, error) {
+	log.Trace(log.Here(), "Invoke() : calling method -")
+	response := Response{}
+	url := h.HttpHyperledger + CHAINCODE
+	log.Trace(log.Here(), "URL: ", url)
+	contentBytes, err1 := Build_invoke_body(chaincode_name, hp_account, function, args)
+	if err1 != nil {
+		return response, err1
+	}
+	log.Trace(log.Here(), "BODY: ", string(contentBytes))
+	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	if err2 != nil {
+		return response, err2
+	}
+	defer resp.Body.Close()
+	err3 := BuildResponse(&response, resp)
+	return response, err3
+}
+
+func (h *HP_Helper) Query(chaincode_name, hp_account, function string, args []string) (Response, error) {
+	log.Trace(log.Here(), "Query() : calling method -")
+	response := Response{}
+	url := h.HttpHyperledger + CHAINCODE
+	log.Trace(log.Here(), "URL: ", url)
+	contentBytes, err1 := Build_query_body(chaincode_name, hp_account, function, args)
+	if err1 != nil {
+		return response, err1
+	}
+	log.Trace(log.Here(), "BODY: ", string(contentBytes))
+	resp, err2 := client.Post(url, CONTENTTYPE, bytes.NewBuffer(contentBytes))
+	if err2 != nil {
+		return response, err2
+	}
+	defer resp.Body.Close()
+	err3 := BuildResponse(&response, resp)
+	return response, err3
+}
+
+func (h *HP_Helper) Transaction(transaction_uuid string) (Transaction, error) {
+	log.Trace(log.Here(), "Transation() : calling method -")
+	response := Transaction{}
+	url := h.HttpHyperledger + TRANSACTION + "/" + transaction_uuid
+	log.Trace(log.Here(), "URL: ", url)
+	resp, err2 := client.Get(url)
+	if err2 != nil {
+		return response, err2
+	}
+	defer resp.Body.Close()
+	err3 := BuildResponse(&response, resp)
+	return response, err3
+}
+
+func BuildResponse(response interface{}, resp *http.Response) error {
+	log.Trace(log.Here(), "BuildResponse() : calling method -")
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	log.Trace(log.Here(), "RAW RESPONSE: ", string(bytes))
+	err = json.Unmarshal(bytes, &response)
+	if err != nil {
+		return err
+	}
+	responseToString, err := utils.StructToString(response)
+	if err == nil {
 		log.Trace(log.Here(), "RESPONSE: ", responseToString)
 	}
-	return response, nil
-}
-
-func (h *HP_Helper) Invoke() {
-	log.Trace(log.Here(), "Invoke() : calling method -")
-}
-
-func (h *HP_Helper) Query() {
-	log.Trace(log.Here(), "Query() : calling method -")
-}
-
-func (h *HP_Helper) Registar() {
-	log.Trace(log.Here(), "Registar() : calling method -")
-}
-
-func main() {
-
-	chaincodeName := "1234567890"
-	emptyargs := make([]string, 0)
-	args := []string{"000", "111", "222", "BP", "R", "2016-09-27", "2017-10-19"}
-	deploy, _ := Build_deploy_body(SC_PATH, HP_ACCOUNT, "init", emptyargs)
-	invoke, _ := Build_invoke_body(chaincodeName, HP_ACCOUNT, "PostConsent", args)
-	query, _ := Build_query_body(chaincodeName, HP_ACCOUNT, "GetVersion", emptyargs)
-	Display_json(deploy)
-	Display_json(invoke)
-	Display_json(query)
+	return nil
 }

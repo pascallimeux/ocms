@@ -18,7 +18,7 @@ import (
 )
 
 func Build_query_body(chaincode_name, hp_account, function string, args []string) ([]byte, error) {
-	query := &Query{Jsonrpc: JSONRPC, Method: "query", Id: 1, Params: Params2{Type: 1, ChaincodeID: ChaincodeID2{Name: chaincode_name}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
+	query := &Query{Jsonrpc: JSONRPC, Method: "query", Id: 1, Params: Params{Type: 1, ChaincodeID: ChaincodeID{Name: chaincode_name}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
 	bytes, err := json.Marshal(query)
 	if err != nil {
 		return bytes, err
@@ -27,7 +27,7 @@ func Build_query_body(chaincode_name, hp_account, function string, args []string
 }
 
 func Build_invoke_body(chaincode_name, hp_account, function string, args []string) ([]byte, error) {
-	invoke := &Invoke{Jsonrpc: JSONRPC, Method: "invoke", Id: 1, Params: Params2{Type: 1, ChaincodeID: ChaincodeID2{Name: chaincode_name}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
+	invoke := &Invoke{Jsonrpc: JSONRPC, Method: "invoke", Id: 1, Params: Params{Type: 1, ChaincodeID: ChaincodeID{Name: chaincode_name}, SecureContext: hp_account, CtorMsg: CtorMsg{Function: function, Args: args}}}
 	bytes, err := json.Marshal(invoke)
 	if err != nil {
 		return bytes, err
@@ -41,5 +41,10 @@ func Build_deploy_body(smartcontract_path, hp_account, function string, args []s
 	if err != nil {
 		return bytes, err
 	}
+	return bytes, nil
+}
+
+func Build_registar_body(enrollId, enrollSecret string) ([]byte, error) {
+	bytes := []byte(`{"enrollId":` + "\"" + enrollId + "\"" + ` , "enrollSecret":` + "\"" + enrollSecret + "\"" + ` }`)
 	return bytes, nil
 }

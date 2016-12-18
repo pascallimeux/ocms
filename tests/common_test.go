@@ -56,8 +56,8 @@ func setup(isDropDB bool) {
 	logfile = log.Init_log(configuration.LogFileName, configuration.Logger)
 
 	// Init Hyperledger helpers
-	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger, ChainCodePath: configuration.ChainCodePath, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
-	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper}
+	HP_helper := hyperledger.HP_Helper{HttpHyperledger: configuration.HttpHyperledger}
+	Consent_Helper := consent.Consent_Helper{HP_helper: HP_helper, ChainCodePath: configuration.ChainCodePath, ChainCodeName: configuration.ChainCodeName, EnrollID: configuration.EnrollID, EnrollSecret: configuration.EnrollSecret}
 
 	// Init application context
 	AppContext = api.AppContext{Consent_helper: Consent_Helper, Configuration: configuration}

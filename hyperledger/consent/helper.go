@@ -103,7 +103,7 @@ func (c *Consent_Helper) CreateConsent(appID, ownerID, consumerID, datatype, dat
 }
 
 func (c *Consent_Helper) GetConsent(appID, consentID string) (hyperledger.Consent, error) {
-	log.Trace(log.Here(), "GetConsent() : calling method -")
+	log.Trace(log.Here(), "GetConsent(", consentID, ") : calling method -")
 	function := "GetConsent"
 	args := []string{appID, consentID}
 	response, err := c.HP_helper.Query(c.ChainCodeName, c.EnrollID, function, args)
@@ -118,8 +118,8 @@ func (c *Consent_Helper) GetAllConsents(appID string) ([]hyperledger.Consent, er
 	return extractConsents(response, err)
 }
 
-func (c *Consent_Helper) GetACtivesConsents(appID string) ([]hyperledger.Consent, error) {
-	log.Trace(log.Here(), "GetACtivesConsents() : calling method -")
+func (c *Consent_Helper) GetActivesConsents(appID string) ([]hyperledger.Consent, error) {
+	log.Trace(log.Here(), "GetActivesConsents() : calling method -")
 	function := "GetConsents"
 	args := []string{appID}
 	response, err := c.HP_helper.Query(c.ChainCodeName, c.EnrollID, function, args)
@@ -162,7 +162,7 @@ func (c *Consent_Helper) UnactivateConsent(appID, consentID string) (hyperledger
 	log.Trace(log.Here(), "UnactivateConsent() : calling method -")
 	function := "RemoveConsent"
 	args := []string{appID, consentID}
-	response, err := c.HP_helper.Query(c.ChainCodeName, c.EnrollID, function, args)
+	response, err := c.HP_helper.Invoke(c.ChainCodeName, c.EnrollID, function, args)
 	return response, err
 }
 

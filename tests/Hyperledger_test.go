@@ -104,7 +104,7 @@ func TestGetAllConsentsNominal(t *testing.T) {
 }
 
 func TestGetActivesConsentsNominal(t *testing.T) {
-	consents, err := AppContext.Consent_helper.GetACtivesConsents(AppContext.Configuration.ApplicationID)
+	consents, err := AppContext.Consent_helper.GetActivesConsents(AppContext.Configuration.ApplicationID)
 	if err != nil {
 		t.Error(err)
 	}

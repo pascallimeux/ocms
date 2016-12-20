@@ -44,6 +44,7 @@ const (
 func (h *HP_Helper) Registar(enrollId, enrollSecret string) (SimpleResponse, error) {
 	log.Trace(log.Here(), "Registar() : calling method -")
 	timer := utils.Timer{}
+	timer.StartTimer()
 	response := SimpleResponse{}
 	url := h.HttpHyperledger + REGISTAR
 	log.Trace(log.Here(), "URL: ", url)
@@ -65,6 +66,7 @@ func (h *HP_Helper) Registar(enrollId, enrollSecret string) (SimpleResponse, err
 func (h *HP_Helper) IsRegistar(enrollId string) (SimpleResponse, error) {
 	log.Trace(log.Here(), "IsRegistar() : calling method -")
 	timer := utils.Timer{}
+	timer.StartTimer()
 	response := SimpleResponse{}
 	url := h.HttpHyperledger + REGISTAR + "/" + enrollId
 	log.Trace(log.Here(), "URL: ", url)
@@ -81,6 +83,7 @@ func (h *HP_Helper) IsRegistar(enrollId string) (SimpleResponse, error) {
 func (h *HP_Helper) DeployChainCode(smartcontract_path, hp_account, function string, args []string) (Response, error) {
 	log.Trace(log.Here(), "DeployChainCode() : calling method -")
 	timer := utils.Timer{}
+	timer.StartTimer()
 	response := Response{}
 	url := h.HttpHyperledger + CHAINCODE
 	log.Trace(log.Here(), "URL: ", url)
@@ -102,6 +105,7 @@ func (h *HP_Helper) DeployChainCode(smartcontract_path, hp_account, function str
 func (h *HP_Helper) Invoke(chaincode_name, hp_account, function string, args []string) (Response, error) {
 	log.Trace(log.Here(), "Invoke() : calling method -")
 	timer := utils.Timer{}
+	timer.StartTimer()
 	response := Response{}
 	url := h.HttpHyperledger + CHAINCODE
 	log.Trace(log.Here(), "URL: ", url)
@@ -123,6 +127,7 @@ func (h *HP_Helper) Invoke(chaincode_name, hp_account, function string, args []s
 func (h *HP_Helper) Query(chaincode_name, hp_account, function string, args []string) (Response, error) {
 	log.Trace(log.Here(), "Query() : calling method -")
 	timer := utils.Timer{}
+	timer.StartTimer()
 	response := Response{}
 	url := h.HttpHyperledger + CHAINCODE
 	log.Trace(log.Here(), "URL: ", url)
@@ -144,6 +149,7 @@ func (h *HP_Helper) Query(chaincode_name, hp_account, function string, args []st
 func (h *HP_Helper) GetTransaction(transaction_uuid string) (Transaction, error) {
 	log.Trace(log.Here(), "GetTransaction() : calling method -")
 	timer := utils.Timer{}
+	timer.StartTimer()
 	response := Transaction{}
 	url := h.HttpHyperledger + TRANSACTION + "/" + transaction_uuid
 	log.Trace(log.Here(), "URL: ", url)

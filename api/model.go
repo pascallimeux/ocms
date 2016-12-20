@@ -13,6 +13,10 @@ limitations under the License.
 
 package api
 
+import (
+	"fmt"
+)
+
 type Consent struct {
 	Consentid  string
 	Action     string
@@ -23,4 +27,25 @@ type Consent struct {
 	Dataaccess string
 	Dt_begin   string
 	Dt_end     string
+}
+
+type IsConsent struct {
+	Consent string
+}
+
+func (c *Consent) Print() string {
+	consentStr := fmt.Sprintf("ConsentID:%s ConsumerID:%s OwnerID:%s Datatype:%s Dataaccess:%s Dt_begin:%s Dt_end:%s", c.Consentid, c.Consumerid, c.Ownerid, c.Datatype, c.Dataaccess, c.Dt_begin, c.Dt_end)
+	return consentStr
+}
+
+type DecodedConsent struct {
+	Txuuid     string
+	Appid      string
+	Ownerid    string
+	Consumerid string
+	Datatype   string
+	Dataaccess string
+	Dt_begin   string
+	Dt_end     string
+	Ccid       string
 }

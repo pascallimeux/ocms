@@ -50,7 +50,7 @@ func main() {
 	if err != nil {
 		log.Error(log.Here(), " Impossible to retrieve the IP address of this machine")
 	} else {
-		configuration.HttpHostUrl = ipAddress + ":8030"
+		configuration.HttpHostUrl = ipAddress + ":8020"
 	}
 
 	// Write configuration in log
@@ -69,8 +69,8 @@ func main() {
 	s := &http.Server{
 		Addr:         configuration.HttpHostUrl,
 		Handler:      router,
-		ReadTimeout:  configuration.ReadTimeout * time.Second,
-		WriteTimeout: configuration.WriteTimeout * time.Second,
+		ReadTimeout:  configuration.ReadTimeout * time.Nanosecond,
+		WriteTimeout: configuration.WriteTimeout * time.Nanosecond,
 	}
 	log.Fatal(log.Here(), s.ListenAndServe().Error())
 }

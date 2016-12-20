@@ -14,7 +14,6 @@ limitations under the License.
 package api
 
 import (
-	//"bytes"
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
@@ -146,6 +145,27 @@ func (a *AppContext) unactivateConsent(applicationID, consentID string) ([]byte,
 	return HPconsent2ConsentBytes(consent)
 }
 
+func (a *AppContext) isConsent(consent Consent) ([]byte, error) {
+	message := fmt.Sprintf("isConsent(consent=%s) : calling method -", consent.Print())
+	log.Info(log.Here(), message)
+	isconsent, err := a.Consent_helper.IsConsent(a.Configuration.ApplicationID, consent.Ownerid, consent.Consumerid, consent.Datatype, consent.Dataaccess)
+	if err != nil {
+		return nil, err
+	}
+	//response := IsConsent{}
+	var response string
+	if isconsent {
+		//response.Consent = "True"
+		response = "True"
+	} else {
+		//response.Consent = "False"
+		response = "False"
+	}
+	//content, _ := json.Marshal(response)
+	content := "{\"content\":\"" + response + "\"} "
+	return []byte(content), nil
+}
+
 func (a *AppContext) getConsents4Consumer(applicationID, consumerID string) ([]byte, error) {
 	message := fmt.Sprintf("getConsents4Consumer(applicationID=%s, consumerID=%s) : calling method -", applicationID, consumerID)
 	log.Info(log.Here(), message)
@@ -164,23 +184,6 @@ func (a *AppContext) getConsents4Owner(applicationID, ownerID string) ([]byte, e
 		return nil, err
 	}
 	return HPconsents2ConsentsBytes(consents)
-}
-
-func (a *AppContext) isConsent(consent Consent) ([]byte, error) {
-	message := fmt.Sprintf("isConsent(consent=%s) : calling method -", consent.Print())
-	log.Info(log.Here(), message)
-	isconsent, err := a.Consent_helper.IsConsent(a.Configuration.ApplicationID, consent.Ownerid, consent.Consumerid, consent.Datatype, consent.Dataaccess)
-	if err != nil {
-		return nil, err
-	}
-	response := IsConsent{}
-	if isconsent {
-		response.Consent = "True"
-	} else {
-		response.Consent = "False"
-	}
-	content, _ := json.Marshal(response)
-	return content, nil
 }
 
 func convertHPConsents2APIConsents(HPconsents []hyperledger.Consent) []Consent {

@@ -29,9 +29,9 @@ type Consent struct {
 	Dt_end     string
 }
 
-type IsConsent struct {
-	Consent string
-}
+//type IsConsent struct {
+//	Consent string
+//}
 
 func (c *Consent) Print() string {
 	consentStr := fmt.Sprintf("ConsentID:%s ConsumerID:%s OwnerID:%s Datatype:%s Dataaccess:%s Dt_begin:%s Dt_end:%s", c.Consentid, c.Consumerid, c.Ownerid, c.Datatype, c.Dataaccess, c.Dt_begin, c.Dt_end)
